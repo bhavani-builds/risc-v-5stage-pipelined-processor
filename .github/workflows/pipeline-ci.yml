@@ -1,0 +1,51 @@
+name: 5-Stage RISC-V Pipeline CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  simulation:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Icarus Verilog
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y iverilog
+
+      - name: Compile Verilog Design
+        run: |
+          iverilog -g2012 -Wall \
+            -s pipeline_cpu_tb \
+            -o pipeline_sim \
+            rtl/program_counter.v \
+            rtl/instruction_memory.v \
+            rtl/register_file.v \
+            rtl/alu.v \
+            rtl/immediate_generator.v \
+            rtl/control_unit.v \
+            rtl/if_id_register.v \
+            rtl/id_ex_register.v \
+            rtl/ex_mem_register.v \
+            rtl/mem_wb_register.v \
+            rtl/forwarding_unit.v \
+            rtl/hazard_detection_unit.v \
+            rtl/data_memory.v \
+            rtl/pipeline_cpu.v \
+            tb/pipeline_cpu_tb.v
+
+      - name: Run Simulation
+        run: |
+          vvp pipeline_sim
+
+      - name: Verify Waveform
+        run: |
+          test -f pipeline_cpu.vcd
