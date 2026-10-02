@@ -1,0 +1,20 @@
+00100093
+00100113
+00208463
+06300193
+00500213
+00000013
+ADDI x1, x0, 1
+ADDI x2, x0, 1
+
+BEQ  x1, x2, +8
+
+ADDI x3, x0, 99    ← must be flushed
+
+ADDI x4, x0, 5     ← branch target
+NOP
+
+x1 = 1
+x2 = 1
+x3 = 0     ← flushed
+x4 = 5     ← executed
