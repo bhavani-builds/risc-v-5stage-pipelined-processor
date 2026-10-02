@@ -1,20 +1,38 @@
-00100093
-00100113
-00208463
-06300193
-00500213
+00A00093
+01400113
+002081B3
+003101B3
+00302023
+00002203
+004202B3
+00628463
+06300313
+008003EF
 00000013
-ADDI x1, x0, 1
-ADDI x2, x0, 1
+00000013
+00500393
+00000013
 
-BEQ  x1, x2, +8
+ADDI x1, x0, 10
+ADDI x2, x0, 20
 
-ADDI x3, x0, 99    ← must be flushed
+ADD  x3, x1, x2       # x3 = 30
+ADD  x3, x2, x3       # x3 = 50
 
-ADDI x4, x0, 5     ← branch target
+SW   x3, 0(x0)        # Memory[0] = 50
+LW   x4, 0(x0)        # x4 = 50
+
+ADD  x5, x4, x1       # x5 = 60
+                       # load-use hazard
+
+BEQ  x5, x6, +8       # not taken
+
+ADDI x6, x0, 99
+
+JAL  x7, +8
+
+NOP
 NOP
 
-x1 = 1
-x2 = 1
-x3 = 0     ← flushed
-x4 = 5     ← executed
+ADDI x7, x0, 5
+NOP
